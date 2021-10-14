@@ -46,7 +46,10 @@ RUN pip3 install \
 RUN pip3 install -v python-mecab-ko
 
 # 3. install pororo
-RUN pip3 install pororo
+COPY setup.patch .
+RUN git clone https://github.com/kakaobrain/pororo.git && \
+    patch pororo/setup.py setup.patch && \
+    pip3 install -e pororo
 
 # 4. install brainspeech
 RUN pip3 install soundfile \
@@ -74,7 +77,8 @@ RUN pip3 install -v librosa \
     scipy \
     SoundFile==0.10.2 \
     numba==0.48 \
-    ko_pron
+    ko_pron \
+    jupyterlab
 
 WORKDIR /app/external_lib
 
@@ -86,9 +90,14 @@ ENV KENLM_ROOT_DIR="/app/external_lib/kenlm/"
 
 WORKDIR /app/external_lib
 RUN git clone -b v0.2 https://github.com/facebookresearch/wav2letter.git
+
+COPY CMakeLists.patch .
+COPY select_compute_arch.patch .
+
+RUN patch wav2letter/CMakeLists.txt CMakeLists.patch
+RUN patch wav2letter/cmake/select_compute_arch.cmake select_compute_arch.patch
+
 WORKDIR /app/external_lib/wav2letter/bindings/python
 RUN pip3 install -e .
 
 WORKDIR /app
-
-RUN pip3 install jupyterlab
