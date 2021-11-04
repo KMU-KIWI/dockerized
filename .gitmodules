@@ -1,3 +1,6 @@
 [submodule "bert-as-service"]
 	path = bert-as-service
 	url = https://github.com/hanxiao/bert-as-service.git
+[submodule "KoBERT/KoBERT"]
+	path = KoBERT/KoBERT
+	url = https://github.com/SKTBrain/KoBERT.git
